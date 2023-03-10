@@ -1,0 +1,43 @@
+stages:
+  - lint
+  - build
+
+variables:
+  CI_REGISTRY: public.ecr.aws
+  IMAGE_NAME: public.ecr.aws/h0n4z8i3/gutenberg:latest
+  PROD_CI_REGISTRY: private.ecr.aws
+  PROD_IMAGE_NAME: private.ecr.aws/h0n4z8i3/gutenberg:latest
+
+# lint: verify that the Dockerfile follows the conventions we expect it to
+dockerfile:
+  image: hadolint/hadolint:v1.16.3-debian
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: lint
+  script:
+    - hadolint --ignore DL3005 --ignore DL3008 --ignore DL3009 Dockerfile
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - name: docker:dind
+      alias: docker
+  script:
+    - echo "$CONTAINER_REGISTRY_PASSWORD" | docker login -u $CONTAINER_REGISTRY_USERNAME --password-stdin $CI_REGISTRY
+    - docker build . -t $IMAGE_NAME:V0.1
+    - docker push $IMAGE_NAME:V0.1
+
+build_prod:
+  stage: build
+  image: docker:20.10.21-dind
+  services:
+    - name: docker:dind
+      alias: docker
+  script:
+    - echo "$PROD_CONTAINER_REGISTRY_PASSWORD" | docker login -u $PROD_CONTAINER_REGISTRY_USERNAME --password-stdin $PROD_CI_REGISTRY
+    - docker build -f Dockerfile-prod -t $PROD_IMAGE_NAME:V0.1 .
+    - docker push $PROD_IMAGE_NAME:V0.1
+  # Build and deploy in prod only when merged with master.
+  only:
+    - main
