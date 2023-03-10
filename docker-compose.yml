@@ -1,0 +1,42 @@
+#docker-compose.yml
+
+version: '3.8'
+
+services:
+  # PostgreSQL Container
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    hostname: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+
+  # Fastapi Container
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn main:app --host 0.0.0.0 --port 8000'
+    ports:
+      - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
+    # environment:
+    #   - PG_HOST=db
+
+volumes:
+  postgres_data:
+
+

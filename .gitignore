@@ -1,0 +1,7 @@
+*.pyc
+wheels/
+*.egg-info/
+.idea/
+.vscode/
+.venv
+manifest.yml
