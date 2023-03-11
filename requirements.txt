@@ -2,3 +2,4 @@ fastapi
 asyncpg
 loguru
 uvicorn
+fastapi-pagination

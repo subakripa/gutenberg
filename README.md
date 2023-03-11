@@ -40,4 +40,12 @@ docker run -d -p 0.0.0.0:5432:5432 --name postgres -e POSTGRES_USER=postgres -e 
 Execute docker compose up -d.
 
 This should bring up both the services DB and App and you can access the swagger docs on
-localhost:8000/docs.
+localhost:8000/docs. If using this, change the DB host to "db" - the service name.
+
+To use the dockerfile and execute the application, run the below commands.
+docker build -t gutenberg .
+docker run -p 8000:8000 gutenberg
+
+This will render the swagger API in localhost:8000/docs and you can pass in the parameters as well as
+number of results to see (pagination).
+

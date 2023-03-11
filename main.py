@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from app.api.routes.api import router as api_router
+from fastapi_pagination import add_pagination
 from app.db.events import create_start_app_handler, create_stop_app_handler
 
 def get_application() -> FastAPI:
@@ -17,6 +18,7 @@ def get_application() -> FastAPI:
     application.add_event_handler("startup", create_start_app_handler(application))
     application.add_event_handler("shutdown", create_stop_app_handler(application))
     application.include_router(api_router)
+    add_pagination(application)
 
     return application
 

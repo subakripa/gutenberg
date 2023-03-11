@@ -18,4 +18,4 @@ class BooksPGRepository(PGSQLBaseRepository):
         #         query_parms
         #     )
         #     resp_list= [{k: v for (k, v) in dict(row).items()} for row in books_row]
-            return ["resp_list"]
+            return ["All the books returned"]

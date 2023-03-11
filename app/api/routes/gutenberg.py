@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi_pagination import Page, add_pagination, paginate
 from app.api.dependencies.gutenberg import search_books_dependency
 from starlette.status import HTTP_200_OK
 router = APIRouter()
@@ -6,7 +7,8 @@ router = APIRouter()
 @router.get(
     "/project.book-search",
     status_code=HTTP_200_OK,
-    name="search:get-books"
+    name="search:get-books",
+    response_model=Page
 )
 async def get_searched_books(books_list: list = Depends(search_books_dependency))-> list:
     """
@@ -16,4 +18,4 @@ async def get_searched_books(books_list: list = Depends(search_books_dependency)
     Returns:
         list: List of Books fetched from DB.
     """
-    return books_list
+    return paginate(books_list)

@@ -16,11 +16,11 @@ async def connect_to_db(app: FastAPI) -> None:
     logger.info("Connecting to Postgres")
 
     pool: Pool = await asyncpg.create_pool(
-        host="db",
+        host="gutenberg.cdxtstm5qxz2.ap-south-1.rds.amazonaws.com",
         port=5432,
         user="postgres",
         password="postgres",
-        database="postgres",
+        # database="gutenberg",
         min_size=1,
         max_size=2,
         command_timeout=10,
